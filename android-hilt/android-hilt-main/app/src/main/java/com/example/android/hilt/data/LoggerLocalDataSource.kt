@@ -32,14 +32,16 @@ import javax.inject.Singleton
 // 6: 파라미터로 들어오는 LogDao의 경우, Interface로 되어있다. 이 경우 Hilt는 어떻게 의존성을 주입할까?
 
 @Singleton
-class LoggerLocalDataSource @Inject constructor(private val logDao: LogDao) {
+class LoggerLocalDataSource @Inject constructor(
+    private val logDao: LogDao
+) : LoggerDataSource {
 
     private val executorService: ExecutorService = Executors.newFixedThreadPool(4)
     private val mainThreadHandler by lazy {
         Handler(Looper.getMainLooper())
     }
 
-    fun addLog(msg: String) {
+    override fun addLog(msg: String) {
         executorService.execute {
             logDao.insertAll(
                 Log(
@@ -50,14 +52,14 @@ class LoggerLocalDataSource @Inject constructor(private val logDao: LogDao) {
         }
     }
 
-    fun getAllLogs(callback: (List<Log>) -> Unit) {
+    override fun getAllLogs(callback: (List<Log>) -> Unit) {
         executorService.execute {
             val logs = logDao.getAll()
             mainThreadHandler.post { callback(logs) }
         }
     }
 
-    fun removeLogs() {
+    override fun removeLogs() {
         executorService.execute {
             logDao.nukeTable()
         }

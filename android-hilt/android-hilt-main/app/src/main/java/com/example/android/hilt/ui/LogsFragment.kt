@@ -28,7 +28,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.android.hilt.LogApplication
 import com.example.android.hilt.R
 import com.example.android.hilt.data.Log
+import com.example.android.hilt.data.LoggerDataSource
 import com.example.android.hilt.data.LoggerLocalDataSource
+import com.example.android.hilt.di.InMemoryLogger
 import com.example.android.hilt.util.DateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -44,7 +46,11 @@ class LogsFragment : Fragment() {
 
     // 5: Inject 어노테이션을 통해 의존성 주입이 가능하다.
     // private는 Hilt를 주입할 수 없다!
-    @Inject lateinit var logger: LoggerLocalDataSource
+    // 9: Qualifier로 다른 LoggerDataSource를 주입하기 위해 interface 생성
+    // 9: Qualifier로 처리된 구현을 제공한다.
+
+    @InMemoryLogger
+    @Inject lateinit var logger: LoggerDataSource
     @Inject lateinit var dateFormatter: DateFormatter
 
     private lateinit var recyclerView: RecyclerView
