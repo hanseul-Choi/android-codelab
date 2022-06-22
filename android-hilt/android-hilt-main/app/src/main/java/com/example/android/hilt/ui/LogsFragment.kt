@@ -30,14 +30,22 @@ import com.example.android.hilt.R
 import com.example.android.hilt.data.Log
 import com.example.android.hilt.data.LoggerLocalDataSource
 import com.example.android.hilt.util.DateFormatter
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Fragment that displays the database logs.
  */
+
+// 5: AndroidEntryPoint는 Android 클래스의 라이프사이클을 따르는 Dependency Container를 생성한다.
+// 5: 특히, Fragment의 경우, 계속 유지되는 뷰라면 Hilt를 적용할 수 없다.
+@AndroidEntryPoint
 class LogsFragment : Fragment() {
 
-    private lateinit var logger: LoggerLocalDataSource
-    private lateinit var dateFormatter: DateFormatter
+    // 5: Inject 어노테이션을 통해 의존성 주입이 가능하다.
+    // private는 Hilt를 주입할 수 없다!
+    @Inject lateinit var logger: LoggerLocalDataSource
+    @Inject lateinit var dateFormatter: DateFormatter
 
     private lateinit var recyclerView: RecyclerView
 
@@ -55,17 +63,18 @@ class LogsFragment : Fragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+//    override fun onAttach(context: Context) {
+//        super.onAttach(context)
+//
+//        populateFields(context)
+//    }
 
-        populateFields(context)
-    }
-
-    private fun populateFields(context: Context) {
-        logger = (context.applicationContext as LogApplication).serviceLocator.loggerLocalDataSource
-        dateFormatter =
-            (context.applicationContext as LogApplication).serviceLocator.provideDateFormatter()
-    }
+//    // 5: 원래 Hilt를 적용하지 않는다면, 여기서 dependency를 제공받는다.
+//    private fun populateFields(context: Context) {
+//        logger = (context.applicationContext as LogApplication).serviceLocator.loggerLocalDataSource
+//        dateFormatter =
+//            (context.applicationContext as LogApplication).serviceLocator.provideDateFormatter()
+//    }
 
     override fun onResume() {
         super.onResume()
