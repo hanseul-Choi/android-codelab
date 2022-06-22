@@ -36,7 +36,7 @@ class ServiceLocator(applicationContext: Context) {
         "logging.db"
     ).build()
 
-    // 5: loggerLocalDataSource의 경우, 항상 같은 인스턴스를 제공한다. => 어떻게?
+    // 5: loggerLocalDataSource의 경우, 항상 같은 인스턴스를 제공한다. => 어떻게? Singleton 어노테이션!
     val loggerLocalDataSource = LoggerLocalDataSource(logsDatabase.logDao())
 
     // 5: DateFormatter의 경우, 항상 다른 인스턴스를 제공한다. => Hilt에서도 해당 방법으로 주입이 가능하다!

@@ -21,10 +21,17 @@ import android.os.Looper
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Data manager class that handles data manipulation between the database and the UI.
  */
+
+// 6: 만약, Activity 내에서만 같은 인스턴스를 제공하고 싶으면 ActivityScoped 어노테이션을 사용한다.
+// 6: 여기서 LoggerLocalDataSource는 모든 구역에서 같은 인스턴스를 제공해야하므로 Singleton 어노테이션을 사용한다.
+// 6: 파라미터로 들어오는 LogDao의 경우, Interface로 되어있다. 이 경우 Hilt는 어떻게 의존성을 주입할까?
+
+@Singleton
 class LoggerLocalDataSource @Inject constructor(private val logDao: LogDao) {
 
     private val executorService: ExecutorService = Executors.newFixedThreadPool(4)
