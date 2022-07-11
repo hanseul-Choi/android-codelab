@@ -36,8 +36,11 @@ class ServiceLocator(applicationContext: Context) {
         "logging.db"
     ).build()
 
+    // 5: loggerLocalDataSource의 경우, 항상 같은 인스턴스를 제공한다. => 어떻게? Singleton 어노테이션!
+    // 7: logDao는 logsDatabase에서 제공한 것이므로 따로 Dependency를 AppDataBase에서 제공해주어야 한다.
     val loggerLocalDataSource = LoggerLocalDataSource(logsDatabase.logDao())
 
+    // 5: DateFormatter의 경우, 항상 다른 인스턴스를 제공한다. => Hilt에서도 해당 방법으로 주입이 가능하다!
     fun provideDateFormatter() = DateFormatter()
 
     fun provideNavigator(activity: FragmentActivity): AppNavigator {
