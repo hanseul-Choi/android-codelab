@@ -25,10 +25,19 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Android")
+                    MyApp()
                 }
             }
         }
+    }
+}
+
+// 5. 계층이 깊어질수록 가독성이 떨어질 수 있다. 재사용이 가능한 UI를 최대한 작게 나누면서 읽기 쉽게하기 위해
+// MyApp 메소드를 생성하여 관리하여 가독성을 해결할 수 있다.
+@Composable
+private fun MyApp() {
+    Surface(color = MaterialTheme.colors.background) {
+        Greeting("Android")
     }
 }
 
@@ -48,6 +57,6 @@ fun Greeting(name: String) {
 @Composable
 fun DefaultPreview() {
     ComposeBasicTheme {
-        Greeting("Android")
+        MyApp()
     }
 }
