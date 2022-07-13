@@ -1,5 +1,6 @@
 package com.ldcc.composebasic
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ldcc.composebasic.ui.theme.ComposeBasicTheme
@@ -116,7 +118,11 @@ fun Greeting(name: String) {
                     .padding(bottom = extraPadding.coerceAtLeast(0.dp)) // 11. spring animation 처리시 만약 음수까지 가게된다면 padding error 발생!
             ) {
                 Text(text = "Hello, ")
-                Text(text = name)
+                // 12. Text style 적용, 또한 copy를 이용해서 기존 style에 새로운 프로퍼티 추가
+                Text(text = name, style = MaterialTheme.typography.h4.copy(
+                    fontWeight = FontWeight.ExtraBold
+                    )
+                )
             }
 
             OutlinedButton(onClick = { expanded.value = !expanded.value }) {
@@ -160,7 +166,13 @@ fun OnboardingPreview() {
 
 // 3. Preview 어노테이션의 경우, 미리보기 화면을 제공한다.
 // 6. Preview 화면의 크기를 지정할 수 있다.
-@Preview(showBackground = true, widthDp = 320)
+// 12. uiMode를 통해 Dark Mode를 테스트할 수 있다.
+@Preview(
+    showBackground = true,
+    widthDp = 320,
+    uiMode = UI_MODE_NIGHT_YES,
+    name = "DefaultPreviewDark"
+)
 @Composable
 fun DefaultPreview() {
     ComposeBasicTheme {
