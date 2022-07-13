@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,7 +43,12 @@ private fun MyApp(names: List<String> = listOf("World", "Compose")) {
 //            Greeting(name = name)
 //        }
 //    }
-    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    // 10. remember 객체는 그저 recomposition에 대해서만 data를 저장할 뿐, Activity가 재시작하면 data가 날라간다.
+    // 따라서, rememberSaveable을 통해 configuration change에 대응할 수 있다.
+    // mutableStateOf : 객체 변화 이벤트를 위해, remember : recomposition에 대응하기 위해, rememberSaveable : recomposition과 Configure Change에 대응하기 위해
+//    var shouldShowOnboarding by remember { mutableStateOf(true) }
+    var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
 
     // 8. Composable은 Visible처리 메소드가 따로 존재하지 않아, 메소드의 호출여부로 UI Tree를 수정하여 UI elements의 Visible 처리를 진행한다.
     if(shouldShowOnboarding) {
