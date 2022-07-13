@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,20 +49,33 @@ private fun MyApp(names: List<String> = listOf("World", "Compose")) {
 // 4. UI 요소들은 modifier 파라미터를 가지고 있으며, Modifier는 UI의 배치방식들을 설명하고 있다.
 // 6. Column을 통해 레이아웃을 세로로 배치할 수 있다.
 // 6. Modifier에서 vertical과 horizontal로 부분적인 padding을 적용할 수 있다.
+// 7. State관련 data를 Composable function안에서 관리하면 원하는대로 동작하지 않을 수 있다.
+// 7. recomposition은 Composable data의 변경을 감지하여 다시 Composable function을 부르는 것이다.
+// 7. 즉, State관련 data를 Composable function안에서 초기화하면 recomposition이 발생해 다시 초기화하여 데이터가 변하지 않는다.
+// 7. 이를 해결하기위해, remember 객체(실제 내부에는 cache를 이용)를 통해 recomposition에도 데이터가 초기화되지 않게 한다.
 @Composable
 fun Greeting(name: String) {
+    val expanded = remember { mutableStateOf(false) }
+
+    // 7. remember를 쓸 필요가 없다. 어차피 expanded가 기억되고 있기 때문
+    val extraPadding = if(expanded.value) 48.dp else 0.dp
+
     Surface(
         color = MaterialTheme.colors.primary,
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
         Row(modifier = Modifier.padding(24.dp)) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(bottom = extraPadding)
+            ) {
                 Text(text = "Hello, ")
                 Text(text = name)
             }
 
-            OutlinedButton(onClick = { /*TODO*/ }) {
-                Text("Show more")
+            OutlinedButton(onClick = { expanded.value = !expanded.value }) {
+                Text(if(expanded.value) "Show less" else "Show more")
             }
         }
     }
