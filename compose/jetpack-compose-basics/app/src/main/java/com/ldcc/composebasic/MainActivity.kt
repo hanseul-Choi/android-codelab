@@ -3,6 +3,9 @@ package com.ldcc.composebasic
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -92,7 +95,15 @@ fun Greeting(name: String) {
     val expanded = remember { mutableStateOf(false) }
 
     // 7. remember를 쓸 필요가 없다. 어차피 expanded가 기억되고 있기 때문
-    val extraPadding = if(expanded.value) 48.dp else 0.dp
+    // 11. animateDpAsState를 이용하여 컴포즈 애니메이션 적용이 가능하다.
+    // 11. animationSpec을 통해서 애니메이션 커스텀이 가능하다.
+    val extraPadding by animateDpAsState(
+        if(expanded.value) 48.dp else 0.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    )
 
     Surface(
         color = MaterialTheme.colors.primary,
@@ -102,7 +113,7 @@ fun Greeting(name: String) {
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(bottom = extraPadding)
+                    .padding(bottom = extraPadding.coerceAtLeast(0.dp)) // 11. spring animation 처리시 만약 음수까지 가게된다면 padding error 발생!
             ) {
                 Text(text = "Hello, ")
                 Text(text = name)
