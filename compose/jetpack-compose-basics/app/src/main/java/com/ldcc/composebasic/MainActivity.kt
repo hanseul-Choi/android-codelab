@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -51,10 +53,19 @@ private fun MyApp(names: List<String> = listOf("World", "Compose")) {
     }
 }
 
+// 9. LazyColumn을 이용하여 RecyclerView와 같은 효과를 낸다.
+// 9. LazyColumn은 RecyclerView와 다르게 View를 Recycle 하지않고 생성하는데, 그 이유는 컴포즈의 생성비용이 저렴하기 때문이다.
 @Composable
-private fun Greetings(names: List<String> = listOf("World", "Compose")) {
-    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-        for(name in names) {
+private fun Greetings(names: List<String> = List(1000){ "$it" } ) {
+//    Column(modifier = Modifier.padding(vertical = 4.dp)) {
+//        for(name in names) {
+//            Greeting(name = name)
+//        }
+//    }
+
+
+    LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
+        items(items = names) { name ->
             Greeting(name = name)
         }
     }
