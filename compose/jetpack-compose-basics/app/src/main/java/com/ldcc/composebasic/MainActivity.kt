@@ -5,9 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,8 +35,26 @@ class MainActivity : ComponentActivity() {
 // 6. Composable function도 Kotlin처럼 사용할 수 있다. (ex. for문 적용)
 @Composable
 private fun MyApp(names: List<String> = listOf("World", "Compose")) {
+//    Column(modifier = Modifier.padding(vertical = 4.dp)) {
+//        for (name in names) {
+//            Greeting(name = name)
+//        }
+//    }
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    // 8. Composable은 Visible처리 메소드가 따로 존재하지 않아, 메소드의 호출여부로 UI Tree를 수정하여 UI elements의 Visible 처리를 진행한다.
+    if(shouldShowOnboarding) {
+        // 8. OnboardingScreen에서의 event를 받아 shouldShowOnBoarding을 처리하기 위해 콜백 진행
+        OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
+    } else {
+        Greetings()
+    }
+}
+
+@Composable
+private fun Greetings(names: List<String> = listOf("World", "Compose")) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
-        for (name in names) {
+        for(name in names) {
             Greeting(name = name)
         }
     }
@@ -81,12 +98,44 @@ fun Greeting(name: String) {
     }
 }
 
+// 7. state 정보는 가장 최상단의 부모에 위치하는 것이 좋다. 이를 state hoisting이라고 하며, 버그 예방과 재사용성을 높이고 테스트 용이성을 높인다.
+@Composable
+fun OnboardingScreen(onContinueClicked: () -> Unit) {
+//    // 8. by 키워드를 통해 value property없이 값을 수정할 수 있다.
+//    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    Surface {
+        Column( // 8. Column의 배치 속성으로 가운데로 배치가 가능하다.
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Welcome to the Basics Codelab!")
+            Button(
+                modifier = Modifier.padding(vertical = 24.dp),
+                onClick = onContinueClicked
+            ) {
+                Text("Continue")
+            }
+        }
+    }
+}
+
+// 8. Preview는 여러 개 표시가 가능하다.
+@Preview(showBackground = true, widthDp = 320, heightDp = 320)
+@Composable
+fun OnboardingPreview() {
+    ComposeBasicTheme {
+        OnboardingScreen(onContinueClicked = {})
+    }
+}
+
 // 3. Preview 어노테이션의 경우, 미리보기 화면을 제공한다.
 // 6. Preview 화면의 크기를 지정할 수 있다.
 @Preview(showBackground = true, widthDp = 320)
 @Composable
 fun DefaultPreview() {
     ComposeBasicTheme {
-        MyApp()
+        Greetings()
     }
 }
