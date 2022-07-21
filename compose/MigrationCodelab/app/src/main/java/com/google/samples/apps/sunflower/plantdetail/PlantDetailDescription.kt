@@ -16,13 +16,43 @@
 
 package com.google.samples.apps.sunflower.plantdetail
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.tooling.preview.Preview
+import com.google.samples.apps.sunflower.R
 
 @Composable
 fun PlantDetailDescription() {
     Surface {
         Text("Hello Compose")
+    }
+}
+
+// 6. 가로 너비 최대로 한 후, padding horizontal 적용 및 Text 내부 가운데 정렬
+@Composable
+private fun PlantName(name: String) {
+    Text(
+        text = name,
+        style = MaterialTheme.typography.h5, // 6. xml의 textAppearanceHeadline5와 일치
+        modifier = Modifier
+            .fillMaxWidth() // 6. xml의 match_parent와 일치
+            .padding(horizontal = dimensionResource(id = R.dimen.margin_small))
+            .wrapContentWidth(Alignment.CenterHorizontally)
+    )
+}
+
+@Preview
+@Composable
+private fun PlantNamePreview() {
+    MaterialTheme {
+        PlantName(name = "Apple")
     }
 }
