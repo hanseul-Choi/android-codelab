@@ -16,6 +16,7 @@
 
 package com.google.samples.apps.sunflower.plantdetail
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -27,7 +28,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.samples.apps.sunflower.R
 import com.google.samples.apps.sunflower.data.Plant
@@ -48,7 +52,12 @@ fun PlantDetailDescription(plantDetailViewModel: PlantDetailViewModel) {
 // 7. LiveData가 Null을 가져오거나 재사용성을 위해 클래스를 한단계 더 거쳐서 처리
 @Composable
 fun PlantDetailContent(plant: Plant) {
-    PlantName(name = plant.name)
+    Surface {
+        Column(Modifier.padding(dimensionResource(id = R.dimen.margin_normal))) {
+            PlantName(name = plant.name)
+            PlantWatering(wateringInterval = plant.wateringInterval)
+        }
+    }
 }
 
 // 6. 가로 너비 최대로 한 후, padding horizontal 적용 및 Text 내부 가운데 정렬
@@ -64,6 +73,36 @@ private fun PlantName(name: String) {
     )
 }
 
+// 8. Watering xml
+@Composable
+private fun PlantWatering(wateringInterval: Int) {
+    Column(Modifier.fillMaxWidth()) {
+        val centerWithPaddingModifier = Modifier
+            .padding(horizontal = dimensionResource(id = R.dimen.margin_small))
+            .align(Alignment.CenterHorizontally)
+        
+        val normalPadding = dimensionResource(id = R.dimen.margin_normal)
+        
+        Text(
+            text = stringResource(id = R.string.watering_needs_prefix),
+            color = MaterialTheme.colors.primaryVariant,
+            fontWeight = FontWeight.Bold,
+            modifier = centerWithPaddingModifier.padding(top = normalPadding)
+        )
+        
+        // 8. LocalContext는 ApplicationContext를 가져옴
+        // 8. 조합된 String으로 변환해주는 plurals
+        val wateringIntervalText = LocalContext.current.resources.getQuantityString(
+            R.plurals.watering_needs_suffix, wateringInterval, wateringInterval
+        )
+        
+        Text(
+            text = wateringIntervalText,
+            modifier = centerWithPaddingModifier.padding(bottom = normalPadding)
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun PlantDetailContentPreview() {
@@ -71,5 +110,13 @@ private fun PlantDetailContentPreview() {
     
     MaterialTheme {
         PlantDetailContent(plant = plant)
+    }
+}
+
+@Preview
+@Composable
+private fun PlantWateringPreview() {
+    MaterialTheme {
+        PlantWatering(wateringInterval = 7)
     }
 }
