@@ -23,17 +23,32 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.samples.apps.sunflower.R
+import com.google.samples.apps.sunflower.data.Plant
+import com.google.samples.apps.sunflower.viewmodels.PlantDetailViewModel
 
+// 7. Compose는 외부로부터 viewmodel을 주입받아서 처리
 @Composable
-fun PlantDetailDescription() {
-    Surface {
-        Text("Hello Compose")
+fun PlantDetailDescription(plantDetailViewModel: PlantDetailViewModel) {
+    // 7. LiveData는 observeAsState 메소드를 통해 관찰이 가능하다.
+    val plant by plantDetailViewModel.plant.observeAsState()
+
+    // 7. 항상 Data를 가져올때는 Null 체크 진행 -> liveData가 Null을 가져올 경우를 대비
+    plant?.let {
+        PlantDetailContent(it)
     }
+}
+
+// 7. LiveData가 Null을 가져오거나 재사용성을 위해 클래스를 한단계 더 거쳐서 처리
+@Composable
+fun PlantDetailContent(plant: Plant) {
+    PlantName(name = plant.name)
 }
 
 // 6. 가로 너비 최대로 한 후, padding horizontal 적용 및 Text 내부 가운데 정렬
@@ -51,8 +66,10 @@ private fun PlantName(name: String) {
 
 @Preview
 @Composable
-private fun PlantNamePreview() {
+private fun PlantDetailContentPreview() {
+    val plant = Plant("id", "Apple", "description", 3, 30, "")
+    
     MaterialTheme {
-        PlantName(name = "Apple")
+        PlantDetailContent(plant = plant)
     }
 }
