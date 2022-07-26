@@ -46,6 +46,7 @@ fun bindIsGone(view: FloatingActionButton, isGone: Boolean?) {
     }
 }
 
+// 9. Compose에서는 아직 Spanned Class가 따로 없어 HTML을 Display하기 어렵다.
 @BindingAdapter("renderHtml")
 fun bindRenderHtml(view: TextView, description: String?) {
     if (description != null) {
