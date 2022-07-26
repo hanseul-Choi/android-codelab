@@ -41,7 +41,9 @@ import androidx.core.text.HtmlCompat
 import com.google.samples.apps.sunflower.R
 import com.google.samples.apps.sunflower.data.Plant
 import com.google.samples.apps.sunflower.viewmodels.PlantDetailViewModel
-
+// 10. AbstractComposeView.disposeComposition으로 컴포지션 수동 삭제가 가능하다.
+// 10. Composition을 직접 관리하기 위해 setViewCompositionStrategy 메소드를 이용할 수 있다.
+// 10. DisposeOnViewTreeLifecycleDestroyed를 통해 LifeCycleOwner가 소멸되면 컴포지션을 삭제할 수 있다.
 // 7. Compose는 외부로부터 viewmodel을 주입받아서 처리
 @Composable
 fun PlantDetailDescription(plantDetailViewModel: PlantDetailViewModel) {
