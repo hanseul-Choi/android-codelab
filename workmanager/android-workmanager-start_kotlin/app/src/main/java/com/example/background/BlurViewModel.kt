@@ -22,6 +22,9 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import com.example.background.workers.BlurWorker
 
 
 class BlurViewModel(application: Application) : ViewModel() {
@@ -36,7 +39,12 @@ class BlurViewModel(application: Application) : ViewModel() {
      * Create the WorkRequest to apply the blur and save the resulting image
      * @param blurLevel The amount to blur the image
      */
-    internal fun applyBlur(blurLevel: Int) {}
+
+    private val workManager = WorkManager.getInstance(application)
+
+    internal fun applyBlur(blurLevel: Int) {
+        workManager.enqueue(OneTimeWorkRequest.from(BlurWorker::class.java)) // WorkRequest를 만들어 큐에 추가합니다.
+    }
 
     private fun uriOrNull(uriString: String?): Uri? {
         return if (!uriString.isNullOrEmpty()) {
