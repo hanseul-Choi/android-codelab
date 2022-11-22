@@ -22,10 +22,15 @@ class BlurWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
         makeStatusNotification("Blurred Imager", appContext)
 
         return try {
+            // error : blur 적용 안되는 이슈 -> 높은 해상도 때문에
+            val sizeDownOption = BitmapFactory.Options()
+            sizeDownOption.inSampleSize = 2
+
             // 먼저 cupcake 이미지 Bitmap을 가져옵니다.
             val picture = BitmapFactory.decodeResource(
                 appContext.resources,
-                R.drawable.android_cupcake
+                R.drawable.android_cupcake,
+                sizeDownOption
             )
 
             // bitmap 파일을 저장소에 저장합니다.
