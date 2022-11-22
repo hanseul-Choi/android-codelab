@@ -22,7 +22,9 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.background.workers.BlurWorker
 
@@ -43,7 +45,11 @@ class BlurViewModel(application: Application) : ViewModel() {
     private val workManager = WorkManager.getInstance(application)
 
     internal fun applyBlur(blurLevel: Int) {
-        workManager.enqueue(OneTimeWorkRequest.from(BlurWorker::class.java)) // WorkRequest를 만들어 큐에 추가합니다.
+        val blurRequest = OneTimeWorkRequestBuilder<BlurWorker>()
+            .setInputData(createInputDataForUri())
+            .build()
+
+        workManager.enqueue(blurRequest) // WorkRequest를 만들어 큐에 추가합니다.
     }
 
     private fun uriOrNull(uriString: String?): Uri? {
@@ -69,6 +75,15 @@ class BlurViewModel(application: Application) : ViewModel() {
 
     internal fun setOutputUri(outputImageUri: String?) {
         outputUri = uriOrNull(outputImageUri)
+    }
+
+    private fun createInputDataForUri(): Data { // Data는 키-값의 WorkRequest를 위한 자료구조입니다.
+        val builder = Data.Builder()
+        imageUri?.let {
+            builder.putString(KEY_IMAGE_URI, imageUri.toString())
+        }
+
+        return builder.build()
     }
 
     class BlurViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
