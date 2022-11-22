@@ -22,6 +22,17 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.background.databinding.ActivityBlurBinding
 
+/**
+ *  WorkManager는 백그라운드 작업을 위한 Jetpack Library입니다.
+ *  - 비동기나 일회성 작업, 주기적인 작업 지원
+ *  - 네트워크 상태, 저장공간, 충전상태 등 제약 조건 지원
+ *  - 동시 작업 실행 및 작업 체이닝 지원
+ *  - WorkManager가의 데이터 통신 작업 지원
+ *  - UI에 상태 표기를 위한 LiveData 지원
+ *
+ *  WorkManager는 사용자가 화면에 나가더라도 완료해야하는 작업에 적합합니다.
+ */
+
 class BlurActivity : AppCompatActivity() {
 
     private val viewModel: BlurViewModel by viewModels {
