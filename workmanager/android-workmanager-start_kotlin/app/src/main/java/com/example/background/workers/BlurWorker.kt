@@ -27,6 +27,8 @@ class BlurWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
         makeStatusNotification("Blurred Imager", appContext)
 
+        sleep() // 3초간 멈추는 작업
+
         return try {
 //            // error : blur 적용 안되는 이슈 -> 높은 해상도 때문에
 //            val sizeDownOption = BitmapFactory.Options()

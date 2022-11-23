@@ -19,6 +19,7 @@ package com.example.background
 import android.app.Application
 import android.content.ContentResolver
 import android.content.Context
+import android.graphics.BlurMaskFilter.Blur
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +28,8 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.background.workers.BlurWorker
+import com.example.background.workers.CleanupWorker
+import com.example.background.workers.SaveImageToFileWorker
 
 
 class BlurViewModel(application: Application) : ViewModel() {
@@ -45,11 +48,31 @@ class BlurViewModel(application: Application) : ViewModel() {
     private val workManager = WorkManager.getInstance(application)
 
     internal fun applyBlur(blurLevel: Int) {
-        val blurRequest = OneTimeWorkRequestBuilder<BlurWorker>()
-            .setInputData(createInputDataForUri())
-            .build()
+//        val blurRequest = OneTimeWorkRequestBuilder<BlurWorker>()
+//            .setInputData(createInputDataForUri())
+//            .build()
+//
+//        workManager.enqueue(blurRequest) // WorkRequest를 만들어 큐에 추가합니다.
 
-        workManager.enqueue(blurRequest) // WorkRequest를 만들어 큐에 추가합니다.
+        var continuation = workManager
+            .beginWith(OneTimeWorkRequest
+                .from(CleanupWorker::class.java)) // WorkMangager의 Chain작업, CleanUpWorker부터 진행
+
+        for(i in 0 until blurLevel) { // CleanupWorker를 진행 후에 blurRequest 진행
+            val blurBuilder = OneTimeWorkRequestBuilder<BlurWorker>()
+
+            if(i == 0) {
+                blurBuilder.setInputData(createInputDataForUri())
+            }
+
+            continuation = continuation.then(blurBuilder.build()) // blur level에 따라 blur 횟수 증가
+        }
+
+        val save = OneTimeWorkRequest.Builder(SaveImageToFileWorker::class.java).build()
+
+        continuation = continuation.then(save) // blurRequest 진행 후에 save 진행
+
+        continuation.enqueue() // Workmanager 실행 작업
     }
 
     private fun uriOrNull(uriString: String?): Uri? {
