@@ -23,10 +23,7 @@ import android.graphics.BlurMaskFilter.Blur
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import com.example.background.workers.BlurWorker
 import com.example.background.workers.CleanupWorker
 import com.example.background.workers.SaveImageToFileWorker
@@ -54,9 +51,19 @@ class BlurViewModel(application: Application) : ViewModel() {
 //
 //        workManager.enqueue(blurRequest) // WorkRequest를 만들어 큐에 추가합니다.
 
+        /*
+            UniqueWork(고유 작업 체인)이 필요한 경우?
+            - 앱이 네트워크에 데이터를 동기화해야하는 경우, 'sync' Name의 시퀀스를 큐에 넣는다.
+            'sync'가 이미 큐에 있는 경우, 지금 들어오는 'sync'작업을 무시(KEEP)하여 작업을 진행시킬 수 있다.
+            - 사진 편집 앱에서 작업을 취소하고 다음 작업을 사용자가 눌러놓은 상태라면,
+            앱에서 'undo' 체인을 제작하고 이에 맞게 교체(REPLACE), 무시(KEEP), 추가(APPEND)하여 작업시킬 수 있다.
+         */
         var continuation = workManager
-            .beginWith(OneTimeWorkRequest
-                .from(CleanupWorker::class.java)) // WorkMangager의 Chain작업, CleanUpWorker부터 진행
+            .beginUniqueWork(
+                IMAGE_MANIPULATION_WORK_NAME,
+                ExistingWorkPolicy.REPLACE,
+                OneTimeWorkRequest.from(CleanupWorker::class.java)
+            ) // WorkMangager의 Chain작업, CleanUpWorker부터 진행
 
         for(i in 0 until blurLevel) { // CleanupWorker를 진행 후에 blurRequest 진행
             val blurBuilder = OneTimeWorkRequestBuilder<BlurWorker>()
