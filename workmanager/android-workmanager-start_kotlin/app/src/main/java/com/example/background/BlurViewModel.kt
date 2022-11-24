@@ -59,7 +59,7 @@ class BlurViewModel(application: Application) : ViewModel() {
             앱에서 'undo' 체인을 제작하고 이에 맞게 교체(REPLACE), 무시(KEEP), 추가(APPEND)하여 작업시킬 수 있다.
          */
         var continuation = workManager
-            .beginUniqueWork(
+            .beginUniqueWork( // 이미지가 완료되기 전에 다른 이미지 블러 처리를 위해 beginUniqueWork 작업 수행
                 IMAGE_MANIPULATION_WORK_NAME,
                 ExistingWorkPolicy.REPLACE,
                 OneTimeWorkRequest.from(CleanupWorker::class.java)
