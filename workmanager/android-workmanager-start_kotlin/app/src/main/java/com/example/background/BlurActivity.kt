@@ -20,6 +20,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.work.WorkInfo
 import com.example.background.databinding.ActivityBlurBinding
 
 /**
@@ -48,6 +50,25 @@ class BlurActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.goButton.setOnClickListener { viewModel.applyBlur(blurLevel) }
+
+        // LiveData observe 등록
+        viewModel.outputWorkInfos.observe(this, workInfosObserver())
+    }
+
+    private fun workInfosObserver(): Observer<List<WorkInfo>> {
+        return Observer { listOfWorkInfo ->
+            if(listOfWorkInfo.isNullOrEmpty()) { // work 정보가 없다면 아무것도 안함
+                return@Observer
+            }
+
+            val workInfo = listOfWorkInfo[0] // TAG가 하나만 존재하기 때문에 일단 0번만 가져옴
+
+            if (workInfo.state.isFinished) { // 끝난 상태에따라 프로그래스바나 완료 버튼 보이기
+                showWorkFinished()
+            } else {
+                showWorkInProgress()
+            }
+        }
     }
 
     /**

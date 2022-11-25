@@ -21,6 +21,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.graphics.BlurMaskFilter.Blur
 import android.net.Uri
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.*
@@ -34,15 +35,18 @@ class BlurViewModel(application: Application) : ViewModel() {
     internal var imageUri: Uri? = null
     internal var outputUri: Uri? = null
 
+    internal val outputWorkInfos: LiveData<List<WorkInfo>> // LiveData를 통해 Work 정보 가져오기
+
+    private val workManager = WorkManager.getInstance(application)
+
     init {
         imageUri = getImageUri(application.applicationContext)
+        outputWorkInfos = workManager.getWorkInfosByTagLiveData(TAG_OUTPUT)
     }
     /**
      * Create the WorkRequest to apply the blur and save the resulting image
      * @param blurLevel The amount to blur the image
      */
-
-    private val workManager = WorkManager.getInstance(application)
 
     internal fun applyBlur(blurLevel: Int) {
 //        val blurRequest = OneTimeWorkRequestBuilder<BlurWorker>()
@@ -75,7 +79,9 @@ class BlurViewModel(application: Application) : ViewModel() {
             continuation = continuation.then(blurBuilder.build()) // blur level에 따라 blur 횟수 증가
         }
 
-        val save = OneTimeWorkRequest.Builder(SaveImageToFileWorker::class.java).build()
+        val save = OneTimeWorkRequestBuilder<SaveImageToFileWorker>() // 이미지 저장하는 작업 TAG 지정
+            .addTag(TAG_OUTPUT)
+            .build()
 
         continuation = continuation.then(save) // blurRequest 진행 후에 save 진행
 
