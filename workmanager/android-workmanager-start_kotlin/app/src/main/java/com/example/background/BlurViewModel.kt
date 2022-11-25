@@ -79,7 +79,12 @@ class BlurViewModel(application: Application) : ViewModel() {
             continuation = continuation.then(blurBuilder.build()) // blur level에 따라 blur 횟수 증가
         }
 
+        val constraints = Constraints.Builder()
+            .setRequiresCharging(true)
+            .build() // 제약 조건 추가
+
         val save = OneTimeWorkRequestBuilder<SaveImageToFileWorker>() // 이미지 저장하는 작업 TAG 지정
+            .setConstraints(constraints)
             .addTag(TAG_OUTPUT)
             .build()
 
