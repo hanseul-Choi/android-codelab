@@ -132,4 +132,8 @@ class BlurViewModel(application: Application) : ViewModel() {
             }
         }
     }
+
+    internal fun cancelWork() {
+        workManager.cancelUniqueWork(IMAGE_MANIPULATION_WORK_NAME) // 이름을 통해 Work 취소하기
+    }
 }
