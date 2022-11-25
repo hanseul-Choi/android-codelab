@@ -16,6 +16,7 @@
 
 package com.example.background
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -53,6 +54,16 @@ class BlurActivity : AppCompatActivity() {
 
         // LiveData observe 등록
         viewModel.outputWorkInfos.observe(this, workInfosObserver())
+
+        // 파일 확인 버튼
+        binding.seeFileButton.setOnClickListener {
+            viewModel.outputUri?.let { currentUri ->
+                val actionView = Intent(Intent.ACTION_VIEW, currentUri)
+                actionView.resolveActivity(packageManager)?.run {
+                    startActivity(actionView)
+                }
+            }
+        }
     }
 
     private fun workInfosObserver(): Observer<List<WorkInfo>> {
@@ -65,6 +76,13 @@ class BlurActivity : AppCompatActivity() {
 
             if (workInfo.state.isFinished) { // 끝난 상태에따라 프로그래스바나 완료 버튼 보이기
                 showWorkFinished()
+
+                val outputImageUri = workInfo.outputData.getString(KEY_IMAGE_URI) // output image uri를 가져옴
+
+                if(!outputImageUri.isNullOrEmpty()) { // uri가 있는 경우 File Button이 보이게 처리
+                    viewModel.setOutputUri(outputImageUri)
+                    binding.seeFileButton.visibility = View.VISIBLE
+                }
             } else {
                 showWorkInProgress()
             }
