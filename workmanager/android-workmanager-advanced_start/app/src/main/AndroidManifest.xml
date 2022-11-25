@@ -16,7 +16,8 @@
   -->
 
 <manifest package="com.example.background"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -40,6 +41,12 @@
         </activity>
 
         <activity android:name=".BlurActivity" />
+
+        <!-- 주문형 초기화 설정 : 앱이 시작할때 workManager를 Instance화하는 것이 아닌 사용자 맞춤으로 진행 -->
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            tools:node="remove" />
 
     </application>
 
