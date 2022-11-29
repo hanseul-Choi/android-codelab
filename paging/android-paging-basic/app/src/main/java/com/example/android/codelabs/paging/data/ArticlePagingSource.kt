@@ -2,6 +2,7 @@ package com.example.android.codelabs.paging.data
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import kotlin.math.max
 
@@ -18,6 +19,9 @@ class ArticlePagingSource : PagingSource<Int, Article>() {
         // 더이상 데이터가 없는 경우, nextKey나 prevKey가 null이다.
         val start = params.key ?: STARTING_KEY
         val range = start.until(start + params.loadSize)
+
+        // 일부러 지연시간을 줘서 확인
+        if(start != STARTING_KEY) delay(LOAD_DELAY_MILLS)
 
         /*
              return 되는 LoadResult
